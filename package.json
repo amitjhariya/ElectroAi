@@ -1,0 +1,56 @@
+{
+  "name": "ravanai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "proxy": "http://localhost:5000",
+  "scripts": {
+    "start": "electron .",
+    "server": "node index.js",
+    "client": "cd client && npm start",
+    "build": "cd client && npm run build",
+    "electron-dev": "concurrently \"npm run server\" \"npm run client\" ",
+    "electron-build": "npm run build && npm run electron-build && electron-dev",
+    "electron-start": "electron .",
+    "electron-pack": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@langchain/community": "^0.0.21",
+    "axios": "^1.6.5",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.2",
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.1.0",
+    "node-llama-cpp": "^2.8.5"
+  },
+  "devDependencies": {
+    "electron": "^28.2.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "your.app.id",
+    "productName": "YourAppName",
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "portable"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    }
+  }
+}

@@ -1,0 +1,43 @@
+# Node.js
+node_modules/
+
+# Dependency directories
+jspm_packages/
+
+# User-specific files
+*.log
+*.sqlite
+*.swp
+*.swo
+*.db
+*.sqlite3
+*.log
+*.tmp
+*.tmp.*
+log.txt
+npm-debug.log*
+
+# Electron build directories
+/dist/
+/build/
+/out/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.production
+.env.local
+.env.*.local
+
+# Visual Studio Code
+.vscode/
+
+# Sublime Text
+.sublime-*
+
+# Editor-specific files
+*.sublime-project
+*.sublime-workspace
