@@ -2,7 +2,7 @@
 
 ## Overview
 
-Electro AI is an artificial intelligence project aimed at revolutionizing the way we interact with electronic devices. Leveraging cutting-edge machine learning techniques, Electro AI enhances user experience, automates tasks, and adapts to user preferences over time. This README provides an overview of the project, installation instructions, usage guidelines, and contribution details.
+Electro AI is a completely free, standalone, open-source desktop AI tool that offers advanced features such as Retrieval Augmented Generation (RAG) and the ability to retrieve internet search results. The tool leverages the power of the Open Source Language Model (LLM) and integrates embeddings obtained through DuckDuckGo scraping. This README document provides a comprehensive overview of the project, detailed installation instructions, usage guidelines, and information on how to contribute to the ongoing development of the tool.
 
 ## Table of Contents
 
@@ -14,45 +14,50 @@ Electro AI is an artificial intelligence project aimed at revolutionizing the wa
 
 ## Features
 
-- **Smart Automation**: Electro AI learns user habits and automates repetitive tasks for enhanced efficiency.
-- **Voice Recognition**: Interact with your devices using natural language commands for a hands-free experience.
-- **Adaptive Preferences**: The AI adapts to user preferences and refines its recommendations over time.
-- **Compatibility**: Works seamlessly with a wide range of electronic devices and platforms.
+🤖 - Execute Language Models (LLMs) on your laptop or PC, entirely offline and Free
+👾 - Utilize models via the in-app Chat UI or connect to a local server compatible with OpenAI
+🔍 - Retrieve internet search results with the integrated search feature
+💬 - Access Retrieval Augmented Generation (RAG) or document chat functionalities
 
 ## Installation
 
 1. Clone the Electro AI repository:
 
     ```bash
-    git clone https://github.com/your-username/electro-ai.git
-    cd electro-ai
+    git clone https://github.com/amitjhariya/ElectroAi.git
+    cd ElectroAi
     ```
 
-2. Install dependencies:
+2. Install Server dependencies:
 
     ```bash
-    pip install -r requirements.txt
+    npm install
+    ```
+3. Start Electon App:
+
+    ```bash
+    npm run electron-start
     ```
 
-3. Set up API keys and configurations (if applicable).
-
-4. Run the application:
+4. Create Desktop App :
 
     ```bash
-    python electro_ai.py
+    npm run electron-start
     ```
 
 ## Usage
 
 Electro AI is designed to be user-friendly. Follow these steps to make the most of its features:
 
-1. **Initialization**: Launch Electro AI and ensure it's connected to your devices.
+Electro Ai is compatible with various models hosted on Hugging Face, including GGUF Llama, MPT, and StarCoder models such as Llama 2, Orca, Vicuna, Nous Hermes, WizardCoder, and more.
 
-2. **Voice Commands**: Speak naturally to Electro AI using voice commands for tasks like device control, setting reminders, or asking for information.
+To run Electro Ai, a minimum requirement is an M1/M2/M3 Mac or a Windows PC with a processor supporting AVX2. Linux support is available in beta.
 
-3. **Automation**: Let Electro AI learn your habits and automate routine tasks. It becomes more efficient over time as it adapts to your preferences.
+This capability is achieved through the integration of the llama.cpp & lanchain project.
 
-4. **Customization**: Explore Electro AI settings to customize its behavior according to your needs.
+Download Quantized models from  HuggingFace 🤗 repositories (TheBloke recommanded).
+
+Upload Dcoumennts like pdf, text, json or csv
 
 ## Contributing
 
