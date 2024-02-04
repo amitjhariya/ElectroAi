@@ -22,7 +22,7 @@ Electro AI is a completely free, standalone, open-source desktop AI tool that of
 
 ## Demo
 
-- [Video 1](https://www.youtube.com/watch?v=IDXQEpUx3OY)
+[![Video 1](https://aiscout.net/wp-content/uploads/2023/05/Screenshot_101-800x600.jpg.webp)](https://www.youtube.com/watch?v=IDXQEpUx3OY)
 - [Video 2](https://www.youtube.com/watch?v=IDXQEpUx3OY)
 
 ## Installation
