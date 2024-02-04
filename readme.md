@@ -22,10 +22,10 @@ Electro AI is a completely free, standalone, open-source desktop AI tool that of
 
 ## Demo
 
-![RAG](https://github.com/amitjhariya/ElectroAi/blob/master/RAG.png?raw=true)
-![Internet Search](https://github.com/amitjhariya/ElectroAi/blob/master/internetSearch.png?raw=true)
-![Internet Search](https://github.com/amitjhariya/ElectroAi/blob/master/internet.png?raw=true)
-![alt text](https://github.com/amitjhariya/ElectroAi/blob/master/upload.png?raw=true)
+![RAG](https://github.com/amitjhariya/ElectroAi/blob/master/assets/RAG.png?raw=true)
+![Internet Search](https://github.com/amitjhariya/ElectroAi/blob/master/assets/internetSearch.png?raw=true)
+![Internet Search](https://github.com/amitjhariya/ElectroAi/blob/master/assets/internet.png?raw=true)
+![RAR Document Uploads](https://github.com/amitjhariya/ElectroAi/blob/master/assets/upload.png?raw=true)
 
 ## Installation
 
