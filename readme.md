@@ -22,8 +22,10 @@ Electro AI is a completely free, standalone, open-source desktop AI tool that of
 
 ## Demo
 
-[![Video 1](https://aiscout.net/wp-content/uploads/2023/05/Screenshot_101-800x600.jpg.webp)](https://www.youtube.com/watch?v=IDXQEpUx3OY)
-- [Video 2](https://www.youtube.com/watch?v=IDXQEpUx3OY)
+![RAG](https://github.com/amitjhariya/ElectroAi/blob/master/RAG.png?raw=true)
+![Internet Search](https://github.com/amitjhariya/ElectroAi/blob/master/internetSearch.png?raw=true)
+![Internet Search](https://github.com/amitjhariya/ElectroAi/blob/master/internet.png?raw=true)
+![alt text](https://github.com/amitjhariya/ElectroAi/blob/master/upload.png?raw=true)
 
 ## Installation
 
@@ -98,3 +100,4 @@ Electro AI is licensed under the MIT License - see the [LICENSE](LICENSE) file f
 ---
 
 Feel free to reach out if you have any questions or need assistance with Electro AI. Happy coding!
+
