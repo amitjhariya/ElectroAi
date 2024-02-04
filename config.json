@@ -1,7 +1,9 @@
 {
-  "gpuLayers": 20,
-  "model": "C:\\Users\\kush3\\OneDrive\\Desktop\\openchat-3.5-7b.gguf",
-  "systemPrompt":"You are an AI programming assistant. Follow the user's requirements carefully and to the letter. First, think step-by-step and describe your plan for what to build in pseudocode, written out in great detail. Then, output the code in a single code block. Minimize any other prose.",
-  "contextLenght":2000,
-  "temperature":8
+  "systemPrompt": "You are an AI programming assistant. Follow the user's requirements carefully and to the letter. First, think step-by-step and describe your plan for what to build in pseudocode, written out in great detail. Then, output the code in a single code block. Minimize any other prose.",
+  "contextSize": 8000,
+  "gpuLayers": 30,
+  "temperature": 1,
+  "threads": 12,
+  "useMlock": false,
+  "modelPath": "C:\\Users\\Ami\\Desktop\\openhermes-2.5-mistral-7b-16k.Q4_0.gguf"
 }

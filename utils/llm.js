@@ -6,7 +6,7 @@ export let model
 
 export const loadConfig = async () => {
   const data = await fs.readFile("config.json", "utf8");
-  const { model:modelPath, gpuLayers } = JSON.parse(data);
-  model = new LlamaCpp({ modelPath: modelPath, gpuLayers });
-  return { model:modelPath, gpuLayers };
+  const configs = JSON.parse(data);
+  model = new LlamaCpp(configs);
+  return configs;
 };

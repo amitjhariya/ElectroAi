@@ -1,5 +1,8 @@
 import express from "express";
-import AiRouter from "./AiRoutes.js";
+
+import configRouter from "./configRoutes.js";
+import ChatRouter from "./chatRoutes.js";
+import DocumentRounter from './documentRoutes.js'
 
 const router = express.Router();
 
@@ -9,6 +12,8 @@ router.get("/healthcheck", (req, res) => {
   });
 });
 
-router.use("/ai", AiRouter);
+router.use("/config", configRouter);
+router.use("/chat", ChatRouter);
+router.use("/docs", DocumentRounter);
 
 export default router;
