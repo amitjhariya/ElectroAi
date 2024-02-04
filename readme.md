@@ -7,6 +7,7 @@ Electro AI is a completely free, standalone, open-source desktop AI tool that of
 ## Table of Contents
 
 - [Features](#features)
+- [Demo](#demo)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
@@ -18,6 +19,11 @@ Electro AI is a completely free, standalone, open-source desktop AI tool that of
 👾 - Utilize models via the in-app Chat UI or connect to a local server compatible with OpenAI
 🔍 - Retrieve internet search results with the integrated search feature
 💬 - Access Retrieval Augmented Generation (RAG) or document chat functionalities
+
+## Demo
+
+- [Video 1](https://www.youtube.com/watch?v=IDXQEpUx3OY)
+- [Video 2](https://www.youtube.com/watch?v=IDXQEpUx3OY)
 
 ## Installation
 
