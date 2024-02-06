@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/ElectroAi/static/css/main.7f15e21e.css",
+    "main.js": "/ElectroAi/static/js/main.db3f6ddf.js",
+    "static/js/787.197bfbda.chunk.js": "/ElectroAi/static/js/787.197bfbda.chunk.js",
+    "index.html": "/ElectroAi/index.html",
+    "main.7f15e21e.css.map": "/ElectroAi/static/css/main.7f15e21e.css.map",
+    "main.db3f6ddf.js.map": "/ElectroAi/static/js/main.db3f6ddf.js.map",
+    "787.197bfbda.chunk.js.map": "/ElectroAi/static/js/787.197bfbda.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7f15e21e.css",
+    "static/js/main.db3f6ddf.js"
+  ]
+}
