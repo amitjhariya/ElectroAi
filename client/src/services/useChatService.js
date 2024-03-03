@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { useFetch } from '../hooks/useFetch';
-import { CHAT_URL } from "../constants/routes";
+import {  CHAT_URL } from "../constants/routes";
 
 const useChatService = () => {
   const fetchService = useFetch();
@@ -17,9 +17,30 @@ const useChatService = () => {
     },
     [fetchService],
   );
+  const loadChat = useCallback(
+    (data) => {
+      return fetchService.post(`${CHAT_URL}/loadchat`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body:data,
+      });
+    },
+    [fetchService],
+  );
+  const abortChat = useCallback(
+    () => {
+      return fetchService.post(`${CHAT_URL}/abort`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+    [fetchService],
+  );
 
   return {
-    chat,
+    chat,abortChat,loadChat
   };
 };
 

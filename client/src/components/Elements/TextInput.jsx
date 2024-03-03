@@ -7,7 +7,7 @@ const TextInput = ({ value, onChange, placeholder, name }) => (
     onChange={onChange}
     placeholder={placeholder}
     name={name}
-    className="flex text-xs w-full rounded-md border border-input bg-background px-3 py-2  bg-slate-800 text-gray-300"
+    className="flex text-xs w-full rounded-md border border-input border-gray-700 bg-background px-3 py-2  bg-gray-950 text-gray-300 outline-none"
   />
 );
 

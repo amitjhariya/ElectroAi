@@ -44,7 +44,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
     },
-    titleBarStyle: "hidden",
+    // titleBarStyle: "hidden",
     titleBarOverlay: {
       color: "#2f3241",
       symbolColor: "#74b1be",

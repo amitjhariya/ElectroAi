@@ -14,3 +14,5 @@ export const CONFIG_URL = `${BASE_URL}/config`;
 //models
 export const MODEL_URL = `${BASE_URL}/models`;
 
+//abort
+export const ABORT_URL = `${HOST}/abort`;

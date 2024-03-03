@@ -1,22 +1,27 @@
-import React, { useState } from "react";
+import React from "react";
 import CheckBox from "../Elements/CheckBox";
 
 const Internet = ({handlePlugins, plugins}) => {
-  const [isChecked, setChecked] = useState(false);
 
   const handleCheckboxChange = (e) => {
     const value = e.target.checked;
-    setChecked(value);
-    handlePlugins({ ...plugins, internet: value });
+    handlePlugins({ ...plugins, [e.target.name]: value });
   };
 
   return (
+    <>
     <CheckBox
           label="Use Internet"
           name={"internet"}
-          checked={isChecked}
+          onChange={handleCheckboxChange}
+      />
+      <CheckBox
+          label="Use Db"
+          name={"db"}
           onChange={handleCheckboxChange}
         />
+    </>
+    
   );
 };
 

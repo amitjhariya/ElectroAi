@@ -1,9 +1,12 @@
 {
-  "systemPrompt": "You are an AI programming assistant. Follow the user's requirements carefully and to the letter. First, think step-by-step and describe your plan for what to build in pseudocode, written out in great detail. Then, output the code in a single code block. Minimize any other prose.",
-  "contextSize": 8000,
-  "gpuLayers": 30,
-  "temperature": 1,
-  "threads": 12,
+  "systemPrompt": "Answer Using markdown",
+  "gpuLayers": 20,
+  "temperature": 0.75,
+  "threads": 13,
   "useMlock": false,
-  "modelPath": "C:\\Users\\Ami\\Desktop\\openhermes-2.5-mistral-7b-16k.Q4_0.gguf"
+  "batchSize": 2000,
+  "maxTokens": 4000,
+  "modelPath": "E:\\openhermes-2.5-mistral-7b-16k.Q4_0.gguf",
+  "contextSize": 4000,
+  "logitsAll": true
 }

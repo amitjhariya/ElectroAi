@@ -21,7 +21,7 @@ Electro AI is a completely free, standalone, open-source desktop AI tool that of
 💬 - Access Retrieval Augmented Generation (RAG) or document chat functionalities
 
 ## Demo
-
+![New UI](https://github.com/amitjhariya/ElectroAi/blob/master/assets/1.png?raw=true)
 ![RAG](https://github.com/amitjhariya/ElectroAi/blob/master/assets/RAG.png?raw=true)
 ![Internet Search](https://github.com/amitjhariya/ElectroAi/blob/master/assets/internetSearch.png?raw=true)
 ![Internet Search](https://github.com/amitjhariya/ElectroAi/blob/master/assets/internet.png?raw=true)

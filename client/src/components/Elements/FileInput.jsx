@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { FaUpload } from "react-icons/fa";
+import { BsUpload } from "react-icons/bs";
 
 const FileInput = ({ onFileChange }) => {
   const fileInputRef = useRef(null);
@@ -19,10 +19,10 @@ const FileInput = ({ onFileChange }) => {
         Choose File:
       </label>
       <div
-        className="flex h-8 w-full border-gray-400 border rounded-md justify-center items-center cursor-pointer"
+        className="flex h-20 w-96 border-gray-700 border border-dashed rounded-md justify-center items-center cursor-pointer"
         onClick={handleIconClick}
       >
-        <FaUpload size={14} className="bg-slate-300" />
+        <BsUpload size={36}  className="text-gray-600" />
       </div>
 
       <input

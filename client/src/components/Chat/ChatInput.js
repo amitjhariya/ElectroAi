@@ -1,41 +1,59 @@
-import React from 'react'
+import React from "react";
+import useChatService from "../../services/useChatService";
 
-function ChatBox({handleOnChange,sendMessage,message}) {
+function ChatBox({ handleOnChange, sendMessage, message,isStreamimg ,setIsStreaming}) {
+  const { abortChat } = useChatService();
   return (
-    <div className="p-4 border-t border-gray-700">
-          <div className="flex items-center gap-2">
-            <textarea
-              className="flex text-white w-full rounded-md border border-gray-500 bg-background px-3 py-2 text-sm bg-slate-900 overflow-hidden"
-              placeholder="Type a message..."
-              value={message}
-              name="message"
-              onChange={handleOnChange}
-            />
-            <button
-              type="button"
-              onClick={sendMessage}
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium  border hover:bg-slate-800 h-10 w-10 text-gray-200"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width={24}
-                height={24}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-4 w-4 hover:scale-125"
-              >
-                <path d="m22 2-7 20-4-9-9-4Z" />
-                <path d="M22 2 11 13" />
-              </svg>
-              <span className="sr-only">Send message</span>
-            </button>
-          </div>
-        </div>
-  )
+    <div className="p-4 ">
+      <form className="flex flex-col items-center gap-2" onSubmit={sendMessage}>
+        <textarea
+          className="text-gray-300 w-full rounded-md border border-gray-500 bg-background p-5 text-sm bg-gray-950 min-h-min max-h-[50vh] outline-none"
+          placeholder="Type a message..."
+          value={message || ""}
+          name="message"
+          style={{ resize: "none" }}
+          onChange={handleOnChange}
+          onInput={(e) => {
+            e.target.style.height = "auto";
+            e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
+          }}
+          onKeyDown={(e) => {
+            if (e.shiftKey && e.key === "Enter") {
+              e.preventDefault();
+              const start = e.target.selectionStart;
+              const end = e.target.selectionEnd;
+              e.target.value =
+                e.target.value.substring(0, start) +
+                "\n" +
+                e.target.value.substring(end);
+              e.target.selectionStart = e.target.selectionEnd = start + 1;
+            }
+
+            if (!e.shiftKey && e.key === "Enter") {
+              e.preventDefault();
+              sendMessage();
+            }
+          }}
+        ></textarea>
+        {isStreamimg ? (
+          <button
+            type="button"
+            onClick={() => { setIsStreaming(false); abortChat() }}
+            className="mx-auto w-max text-gray-400 text-sm font-bold py-2 px-4 mt-2 rounded-md hover:from-gray-800 hover:from-to-950 bg-gradient-to-br from-gray-800 to-gray-900 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-600"
+          >
+            Stop
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className="mx-auto w-max text-gray-400 text-sm font-bold py-2 px-4 mt-2 rounded-md hover:from-gray-800 hover:from-to-950 bg-gradient-to-br from-gray-800 to-gray-900 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-600"
+          >
+            Submit
+          </button>
+        )}
+      </form>
+    </div>
+  );
 }
 
-export default ChatBox
+export default ChatBox;

@@ -4,12 +4,13 @@ import { PORT } from "./configs/index.js";
 import Router from "./routes/index.js";
 import cookieParser from "cookie-parser";
 import path from "path";
-import { createProxyMiddleware } from "http-proxy-middleware";
 import fs from "node:fs/promises";
+import { connectToDb } from "./utils/db.js";
 
 // Create an Express app
 const app = express();
 
+connectToDb();
 // Use middleware
 app.use(cors());
 app.use(cookieParser());
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Use the router
+app.use(express.static(path.join(path.resolve(), "client/build")));
 
 app.use("/api/v1", Router);
 app.post("/api/v1/config/change_model", async (req, res) => {
@@ -30,13 +32,12 @@ app.post("/api/v1/config/change_model", async (req, res) => {
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-
-  // You can customize the error response based on your requirements
   res.status(500).json({
     error: "Internal Server Error",
     message: err.message,
   });
 });
-const expressServer = app.listen(PORT, () => {
+
+app.listen(PORT, () => {
   console.log(`Server is Up and Running at Port: ${PORT}`);
 });

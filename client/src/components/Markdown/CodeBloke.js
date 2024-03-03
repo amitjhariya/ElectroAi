@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { atomDark  } from "react-syntax-highlighter/dist/cjs/styles/prism";
-import { FaClipboard, FaDownload, FaCheck } from "react-icons/fa";
-
+import { nightOwl as atomDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { FaClipboard, FaCheck, FaDrawPolygon,  FaPlayCircle } from "react-icons/fa";
+import Mermaid from "./Mermaid";
 export const programmingLanguages = {
   javascript: ".js",
   python: ".py",
@@ -30,17 +30,12 @@ export const programmingLanguages = {
   // add more file extensions here, make sure the key is same as language prop in CodeBlock.tsx component
 };
 
-const generateRandomString = (length, lowercase = false) => {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXY3456789";
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return lowercase ? result.toLowerCase() : result;
-};
+
 
 const CodeBlock = ({ language, value, className }) => {
+  const [isMermaid, setIsMermaid] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [output, setOutput] = useState("");
 
   const copyToClipboard = () => {
     if (!navigator.clipboard || !navigator.clipboard.writeText) {
@@ -55,60 +50,95 @@ const CodeBlock = ({ language, value, className }) => {
       }, 2000);
     });
   };
-  const downloadAsFile = () => {
-    const fileExtension = programmingLanguages[language] || ".file";
-    const suggestedFileName = `file-${generateRandomString(
-      3,
-      true
-    )}${fileExtension}`;
+ 
+  const showDiagram = () => {
+    setIsMermaid(!isMermaid);
+  };
 
-    const fileName = window.prompt("Enter file name" || "", suggestedFileName);
+  const runCode = () => {
+    let consoleLogs = [];
 
-    if (!fileName) {
-      // user pressed cancel on prompt
-      return;
+    // Capture console.log outputs
+    const originalConsoleLog = console.log;
+    console.log = (...args) => {
+      consoleLogs.push(args.join(" "));
+      originalConsoleLog.apply(console, args);
+    };
+
+    try {
+      // eslint-disable-next-line no-eval
+      const result = eval(value);
+      setOutput({ result, consoleLogs });
+    } catch (error) {
+      setOutput(`Error: ${error.message}`);
+    } finally {
+      console.log = originalConsoleLog;
     }
-
-    const blob = new Blob([value], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.download = fileName;
-    link.href = url;
-    link.style.display = "none";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
   };
 
   return (
-    <div className={`codeblock bg-zinc-900 m-2 p-1 relative font-sans text-[16px] text-zinc-600 ${className}`}>
+    <div
+      className={`codeblock bg-slate-950 m-2 p-1 relative font-sans text-[16px] text-zinc-600 ${className}`}
+    >
       <div className="flex items-center justify-between py-1.5 px-4">
         <span className="text-xs lowercase text-gray-500 ">{language}</span>
 
         <div className="flex items-center gap-1">
           <button
-            className="flex gap-1.5 items-center rounded bg-none p-1 text-xs text-zinc-600  border border-slate-600"
+            className="flex justify-center items-center text-gray-500 hover:text-black  h-6 w-6 rounded-full p-0.5 bg-gradient-to-br from-gray-800 to-gray-900  hover:bg-white cursor-pointer"
             onClick={copyToClipboard}
           >
-            {isCopied ? <FaCheck size={12} /> : <FaClipboard size={12} />}
+            {isCopied ? <FaCheck size={14} title="copied"  /> : <FaClipboard size={14} title="copy" />}
           </button>
-          <button
-            className="flex items-center rounded bg-none p-1 text-xs text-zinc-600 border border-slate-600"
-            onClick={downloadAsFile}
-          >
-            <FaDownload size={12} />
-          </button>
+
+          {language === "javascript" && (
+            <button
+              className="flex justify-center items-center text-gray-500 hover:text-black h-6 w-6 rounded-full p-0.5 bg-gradient-to-br from-gray-800 to-gray-900  hover:bg-white cursor-pointer"
+              onClick={runCode}
+              title="Run Code" 
+            >
+              <FaPlayCircle size={14} title="run code" />
+            </button>
+          )}
+
+          {language === "mermaid" && (
+            <button
+              className="flex justify-center items-center text-gray-500 hover:text-black  h-6 w-6 rounded-full p-0.5 bg-gradient-to-br from-gray-800 to-gray-900  hover:bg-white cursor-pointer "
+              onClick={showDiagram}
+              title="View In Mermaid " 
+            >
+              <FaDrawPolygon size={14}/>
+            </button>
+          )}
         </div>
       </div>
+      {isMermaid ? (
+        <Mermaid chart={value} />
+      ) : (
+        <SyntaxHighlighter
+          language={language}
+          style={atomDark}
+          customStyle={{
+            margin: 0,
+            fontSize: "12px",
+            backgroundColor: "black",
+          }}
+        >
+          {value}
+        </SyntaxHighlighter>
+      )}
 
-      <SyntaxHighlighter
-        language={language}
-        style={atomDark }
-        customStyle={{ margin: 0 }}
-      >
-        {value}
-      </SyntaxHighlighter>
+      {output && (
+        <div className="text-xs p-2 text-green-500">
+          {output.result && (
+            <>Result: {output.result !== false && output.result}</>
+          )}
+          <br/>
+          {output.consoleLogs && (
+            <>Console: {output.consoleLogs && output.consoleLogs.join(", ")}</>
+          )}
+        </div>
+      )}
     </div>
   );
 };

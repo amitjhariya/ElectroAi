@@ -42,14 +42,14 @@ const DocsLoader = ({ refetch, documents ,handleContext,context}) => {
       <div className="absolute">
         {isLoading && (
           <FaSpinner
-            className="animate-spin text-center  text-white"
+            className="animate-spin text-center  text-black"
             size={18}
           />
         )}
       </div>
 
-      <table className="mt-2 w-full border-collapse border text-gray-400 text-left">
-        <thead className="bg-slate-900">
+      <table className="mt-2 w-full border-collapse border  border-gray-700 text-gray-400 text-left">
+        <thead className="bg-slate-950">
           <tr>
             <th className="p-2">Context</th>
             <th className="p-2 text-right">Status</th>
@@ -64,7 +64,7 @@ const DocsLoader = ({ refetch, documents ,handleContext,context}) => {
             return (
               <tr
                 key={docIndex}
-                className={docIndex % 2 === 0 ? "bg-slate-800" : "bg-slate-700"}
+                className={ `text-xs ${docIndex % 2 === 0 ? "bg-slate-900" : "bg-slate-800"}`}
               >
                 <td className="p-2 capitalize">{doc}</td>
                 <td className="p-2 text-right">

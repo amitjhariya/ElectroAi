@@ -1,66 +1,101 @@
 import { createContext } from "../utils/vectors.js";
-import { loadConfig, model } from "../utils/llm.js";
+import {
+  loadSession,
+  model,
+  context,
+  DB_GRAMMER,
+} from "../utils/llm.js";
+
 import searchEngine from "../utils/search.js";
+import User, { userSchemaJson } from "./../models/Users.js";
+import { AbortController } from "abort-controller";
+
+let controller = new AbortController();
+
+
+
 
 export const chat = async (req, res) => {
+  const { signal } = controller;
   try {
-    const { messages, folder, systemPrompt = "", plugins } = req.body; 
+    if (!model) return res.status(400).json({ error: "Model not loaded" });
+    const { messages, folder, plugins } = req.body;
 
-    const query =messages[messages.length-1].content
-    let searchResult
+    let searchResult, localData;
+
+    let query = messages[messages.length - 1].content;
+
     if (plugins.internet) {
-      searchResult = await searchEngine(query)
+      searchResult = await searchEngine(query);
+      console.log({ searchResult });
+      query = query + `\n\n Internet Search Results : ${searchResult}`;
     }
-    
-    let prompt = ''
-    const topK = 2;
-    for (let i = 0; i < messages.length; i++) {
-      if (i > topK * 2) break;
+    let DB_results;
 
-      if (messages[i]["role"] === "user") {
-        prompt += `Question: ${messages[i].content} \\n`;
-      } else {
-        prompt += `Answer: ${messages[i].content} \\n`;
-      }
-    }
-    
-    if (folder) {
-      const context = await createContext(query, folder, 1);
-      prompt = `${systemPrompt}\n Answer the last question using the provided context ${searchResult ? 'and search results from internet':''}. Your answer should be in your own words and be no longer than 50 words
-      Context: ${context} \n\n
-      ${searchResult ? 'Search Results : ' + JSON.stringify(searchResult) +'\n\n': ''}
-       ${prompt} \n\n Answer:n`; 
-    } else {
-      prompt = `Answer the last question  ${searchResult ? 'using the provided  search results from internet':''}. Your answer should be in your own words and be no longer than 50 words
-      ${searchResult ? 'Search Results : ' + JSON.stringify(searchResult) +'\n\n': ''} 
-      ${prompt} \n\n Answer:`; 
-    }
-    
-    
-    const stream = await model.stream(prompt);
-    res.setHeader("Content-Type", "application/octet-stream");
-    const reader = stream.getReader();
-
-    const pump = async () => {
+    if (plugins.db) {
+      const prompt = ` ${JSON.stringify(
+        userSchemaJson
+      )}  \n use this json Schema of a Model to Create a JSON  to  query for  \n ${query}`;
+      console.log({ prompt });
+      const dbQuery = await model.prompt(prompt, { grammer: DB_GRAMMER });
+      console.log({ dbQuery });
       try {
-        const { done, value } = await reader.read();
-
-        if (done) {
-          res.end();
-        } else {
-          console.log({ value });
-          res.write(value);
-          await pump();
-        }
+        DB_results = await User.find({});
       } catch (error) {
-        console.log({ error });
-        res.status(500).json({ error: error.message });
+        console.error("Error:", error);
       }
-    };
+    }
 
-    await pump();
+    if (folder) {
+      localData = await createContext(query, folder, 1);
+      query = query + `\n\n Context : ${localData}`;
+    }
+
+    res.setHeader("Content-Type", "application/octet-stream");
+    await model.prompt(query, {
+      onToken(chunk) {
+        res.write(context.decode(chunk));
+      },
+      signal: signal,
+    });
+
+    if (DB_results) {
+      res.write(JSON.stringify({ results: DB_results }));
+    }
+  } catch (error) {
+    if (error.message.match(/AbortError/)) {
+      console.log("Fetch operation aborted:", error.message);
+    } else {
+      res.status(500).json({ error: error.message });
+    } 
+  }
+};
+
+export const loadChat = async (req, res) => {
+  const { messages, systemPrompt } = req.body;
+  try {
+    const coversationHistory = [];
+    let currentPrompt = "";
+    messages.forEach((entry) => {
+      if (entry.role === "user") {
+        currentPrompt = entry.content;
+      } else if (entry.role === "system") {
+        coversationHistory.push({
+          prompt: currentPrompt,
+          response: entry.content,
+        });
+      }
+    });
+    await loadSession(coversationHistory, systemPrompt);
+    return res.status(200).json({ message: "chat loaded" });
   } catch (error) {
     console.log({ error });
-    res.status(500).json({ error: error.message });
   }
+};
+
+
+export const abortChat = async (req, res) => {
+  controller.abort()
+  controller = new AbortController();
+  res.send({ message: "Abort requested" });
 };

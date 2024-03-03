@@ -6,19 +6,33 @@ import useDocsService from "../services/useDocsService.js";
 import useAiService from "../services/useAiService.js";
 import useChatService from "../services/useChatService.js";
 
-
 import Messages from "./Message";
 import ConfigBar from "./Sidebar/ConfigBar.js";
 import History from "./Sidebar/History.js";
 import ChatInput from "./Chat/ChatInput.js";
 import Upload from "./Documents/Upload.js";
 import DocsLoader from "./Documents/DocsLoader.js";
-import Plugins from "./Plugins/Internet.jsx";
+import { v4 as uuidv4 } from "uuid";
+import { FiSettings } from "react-icons/fi";
+import { IoMdClose } from "react-icons/io";
 
+import { MdDocumentScanner } from "react-icons/md";
 
 
 function Chat() {
-  const [messages, setMessages] = useState([]);
+  const newConversationId = uuidv4();
+
+  const newConversation = {
+    id: newConversationId,
+    messages: [],
+    titile: "",
+  };
+  const [conversations, setConversations] = useState([newConversation]);
+  const [isShowSettings, setIsShowSettings] = useState(true);
+  const [currentConversationId, setCurrentConversationId] =
+    useState(newConversationId);
+  const [model, setModel] = useState(false);
+  const [isStreamimg, setIsStreaming] = useState(false);
   const [message, setMessage] = useState("");
   const [config, setConfigData] = useState({
     systemPrompt: "",
@@ -29,14 +43,12 @@ function Chat() {
     internet: false,
   });
 
-
-
   const [context, setContext] = useState("");
   const [uploadVisible, setUploadVisible] = useState(false);
 
   const { selectModel, loadModel, loadConfigs } = useAiService();
   const { getDocuments } = useDocsService();
-  const { chat } = useChatService();
+  const { chat, loadChat } = useChatService();
   const { setConfig } = useAiService();
 
   const handleMessage = (e) => {
@@ -46,7 +58,6 @@ function Chat() {
 
   const handleConfigChange = (e) => {
     let { name, value } = e.target;
-    console.log({ name, value });
 
     if (!["systemPrompt", "modelPath", "useMlock"].includes(name)) {
       value = Number(value);
@@ -55,62 +66,94 @@ function Chat() {
     setConfigData({ ...config, [name]: value });
   };
 
-  const sendMessage = async () => {
-    if (!message) return;
-    const newMessages = [...messages, { role: "user", content: message }];
-    setMessages(newMessages);
-    setMessage("");
-    let receivedText = "";
+  const currentConversationIndex = conversations.findIndex(
+    (conv) => conv.id === currentConversationId
+  );
+
+  const sendMessage = async (e, isEdit = false) => {
+    e?.preventDefault();
+    if (!message && !isEdit) return;
+    if (!model) {
+      toast("model not loaded");
+      return;
+    }
+    if (!isEdit) {
+    }
+    const currentMessages = conversations[currentConversationIndex].messages;
+    let newMessages;
+    if (!isEdit) {
+      newMessages = [...currentMessages, { role: "user", content: message }];
+
+      setConversations((prevConversations) => {
+        const updatedConversations = [...prevConversations];
+        updatedConversations[currentConversationIndex].messages = newMessages;
+        return updatedConversations;
+      });
+
+      setMessage("");
+    }
+
     try {
       const response = await chat({
-        messages: newMessages,
-        systemPrompt: config.systemPrompt,
+        messages: isEdit ? currentMessages : newMessages,
         folder: context,
         plugins,
       });
       if (!response.ok) {
+        toast("something went wrong");
         console.log("something went wrong");
         return;
       }
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "system",
-          content: receivedText,
-        },
-      ]);
+
+      setConversations((prevConversations) => {
+        const updatedConversations = [...prevConversations];
+        updatedConversations[currentConversationIndex].messages = [
+          ...updatedConversations[currentConversationIndex].messages,
+          { role: "system", content: "" },
+        ];
+        return updatedConversations;
+      });
 
       const stream = response.body;
       const reader = stream.getReader();
       const textDecoder = new TextDecoder();
+      setIsStreaming(true);
       const processChunk = async ({ done, value }) => {
         if (done) {
           console.log("Stream ended");
           return;
         } else {
           const text = textDecoder.decode(value);
-          receivedText += text;
 
-          setMessages((prev) => [
-            ...prev.slice(0, prev.length - 1),
-            {
-              ...prev[prev.length - 1],
-              content: receivedText,
-            },
-          ]);
+          setConversations((prevConversations) => {
+            const updatedConversations = [...prevConversations];
+            const lastMessageIndex =
+              updatedConversations[currentConversationIndex].messages.length -
+              1;
+            updatedConversations[currentConversationIndex].messages[
+              lastMessageIndex
+            ].content += text;
+            return updatedConversations;
+          });
 
           await reader.read().then(processChunk);
         }
       };
 
       await reader.read().then(processChunk);
-    } catch (error) {}
+      setIsStreaming(false);
+    } catch (error) {
+      setIsStreaming(false);
+      toast("something went wrong");
+    }
   };
 
   const handleSelectModel = async () => {
     const data = await selectModel();
     setConfigData(data);
     await loadModel();
+    toast.success("Model Loaded");
+    setModel(true);
   };
   const toggleUpload = () => {
     setUploadVisible(!uploadVisible);
@@ -128,11 +171,17 @@ function Chat() {
     try {
       const res = await setConfig(config);
       if (res.status === 200) {
-        toast(res.message);
         await loadModel();
+        await loadChat({
+          messages: conversations[currentConversationIndex].messages,
+          systemPrompt: config.systemPrompt,
+        });
+        setModel(true);
       }
     } catch (error) {
       toast("something went wrong");
+    } finally {
+      toast("Model Loaded");
     }
   };
 
@@ -145,10 +194,13 @@ function Chat() {
       }
     } catch (error) {}
   };
-  console.log(config);
 
   useEffect(() => {
     loadData();
+    if (!model) {
+      loadModel();
+      setModel(true);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -157,15 +209,23 @@ function Chat() {
   };
 
   return (
-    <div className="dark flex h-screen  bg-gradient-to-r from-purple-100 via-pink-100 to-red-100 dark:from-purple-100 dark:via-pink-100 dark:to-red-100">
-      <History />
-      <div className="w-2/3 flex flex-col bg-gray-900">
-        <div className="flex items-center justify-end p-4 ">
+    <div className="flex h-screen bg-black bg-gradient-to-br from-gray-900 to-gray-950">
+      <History
+        setConversations={setConversations}
+        conversations={conversations}
+        currentConversationId={currentConversationId}
+        setCurrentConversationId={setCurrentConversationId}
+        systemPrompt={config.systemPrompt}
+      />
+      
+      <div className={` ${isShowSettings ? "w-2/3" : "w-5/6"} flex flex-col`}>        
+        <div className="flex items-center justify-end p-4 relative">
+        {!uploadVisible && <MdDocumentScanner className="absolute  top-5 z-0 left-4  text-gray-600 cursor-pointer" size={32} onClick={toggleUpload}/>} 
           <div
-            className={`w-full h-screen ${
+            className={`w-full h-screen relative ${
               uploadVisible ? "slide-in " : "hidden"
             }`}
-          >
+          ><IoMdClose className="absolute z-0  left-0 text-gray-600 cursor-pointer" size={32} onClick={toggleUpload}/>
             <Upload refetch={refetch} />
             <DocsLoader
               documents={documents}
@@ -174,48 +234,39 @@ function Chat() {
               context={context}
             />
           </div>
-          <button
-            onClick={toggleUpload}
-            className="inline-flex absolute top-5 items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 w-10 text-gray-200"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width={24}
-              height={24}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-4 w-4"
-            >
-              <circle cx={12} cy={12} r={1} />
-              <circle cx={19} cy={12} r={1} />
-              <circle cx={5} cy={12} r={1} />
-            </svg>
-            <span className="sr-only">Documents</span>
-          </button>
         </div>
-        <Messages messages={messages} />
+        <Messages
+          setMessage={setMessage}
+          sendMessage={sendMessage}
+          conversations={conversations}
+          currentConversationIndex={currentConversationIndex}
+          setConversations={setConversations}
+        />
         <ChatInput
           message={message}
           handleOnChange={handleMessage}
           sendMessage={sendMessage}
+          isStreamimg={isStreamimg}
+          setIsStreaming={setIsStreaming}
         />
       </div>
-      <ConfigBar
-        config={config}
-        handleSelectModel={handleSelectModel}
-        handleConfigChange={handleConfigChange}
-        handleSaveConfigs={handleSaveConfigs}
-      >
-        <Plugins handlePlugins={handlePlugins} plugins={plugins} />
-
-        <div className="mr-auto mb-4 text-gray-300  font-semibold p-2 rounded-lg">
-          Context :<span className="text-gray-300">{context}</span>
-        </div>
-      </ConfigBar>
+      {isShowSettings && (
+        <ConfigBar
+          config={config}
+          model={model}
+          handleSelectModel={handleSelectModel}
+          handleConfigChange={handleConfigChange}
+          handleSaveConfigs={handleSaveConfigs}
+          context={context}
+          handlePlugins={handlePlugins}
+          plugins={plugins}
+        />
+      )}
+      <FiSettings
+        size={20}
+        className="right-5 top-5 absolute text-gray-500 cursor-pointer"
+        onClick={() => setIsShowSettings(!isShowSettings)}
+      />
       <Toaster position="top-center" reverseOrder={false} />
     </div>
   );

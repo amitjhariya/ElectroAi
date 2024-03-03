@@ -1,3 +1,5 @@
+@import url(https://cdn.jsdelivr.net/gh/tonsky/FiraCode@1.207/distr/fira_code.css);
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -29,5 +31,37 @@ body{
   }
   to {
     transform: translateY(-100%);
+  }
+}
+
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(18, 29, 43) rgb(13, 13, 26);
+}
+
+
+*::-webkit-scrollbar {
+  width: 30px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgb(53, 53, 53);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgb(18, 18, 27);
+  border-radius: 20px;
+  border: 3px solid rgb(22, 17, 37);
+}
+
+code {
+  font-family: "Fira Code", monospace !important;
+  font-size: 14px;
+}
+
+@supports (font-variation-settings: normal) {
+  code {
+    font-family: "Fira Code VF", monospace !important;
   }
 }
